@@ -1,7 +1,7 @@
 # ---Source code for Streamlit application---
 
 #essential because streamlit needs a .py file to run
-%%writefile app.py
+#%%writefile app.py
 
 #importing all the libraries previously installed, making their functions available to the script
 import streamlit as st
@@ -192,4 +192,5 @@ if submit_button:
             with st.expander(" Show AI-Generated Summary"):
                 with st.spinner('Generating summary...'):
                     summary = get_gemini_summary(job_description, rec['resume'])
+
                     st.write(summary)
