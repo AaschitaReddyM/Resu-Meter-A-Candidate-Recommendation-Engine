@@ -7,4 +7,4 @@ python-docx
 spacy
 plotly
 pandas
-https://www.google.com/search?q=https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz%23egg%3Den_core_web_sm
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz#egg=en_core_web_sm
