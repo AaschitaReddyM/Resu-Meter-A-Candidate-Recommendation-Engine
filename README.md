@@ -37,16 +37,21 @@ Deployment: Docker, Ngrok (for demo)
 
 Highlights:
 1.This application not only fulfills all the core requirements of the assignment but also includes several advanced features to provide a richer, more insightful user experience. 
+
 2.Upgrading to a next-generation gemini-2.5-flash model provides significant advantages. It delivers superior speed and efficiency, ensuring an instant, responsive user experience. The model's enhanced reasoning and larger context window result in more nuanced and accurate AI summaries, even for complex resumes. This commitment to using a state-of-the-art model ensures the highest quality output and a more reliable application.
 
 Core Requirements: 
 Job Description Input: Accepts any job description via a simple text area.
+
 Flexible Resume Input: Supports both bulk file uploads (.pdf, .docx, .txt) and direct text pasting for resumes.
+
 Semantic Ranking:
-Generates sophisticated text embeddings for all documents using
- sentence-transformers.
+Generates sophisticated text embeddings for all documents using sentence-transformers.
+
 Computes the cosine similarity between the job description and each resume to quantify relevance.
+
 Top Candidate Display: Clearly lists the top 10 most relevant candidates with their corresponding similarity scores.
+
 Bonus: AI-Powered Summaries:
 Integrates with the Google Gemini API to generate a concise, 1-2 sentence summary explaining why each candidate is a great fit for the role.
 
@@ -54,7 +59,9 @@ Integrates with the Google Gemini API to generate a concise, 1-2 sentence summar
 
 ✨ Above & Beyond Features
 NLP Keyword Matching: The engine doesn't just rely on a single similarity score. It uses spaCy to perform Natural Language Processing to extract key skills and nouns from the job description and highlights the keywords matched in each candidate's resume, providing an extra layer of explainability.
+
 Interactive Visualization: The results are prepended with an interactive bar chart created with Plotly. This dashboard-like view gives recruiters an immediate, easy-to-understand visual comparison of the top candidates.
+
 Deployment Ready: The project includes a complete Dockerfile and requirements.txt file. This demonstrates a professional understanding of containerization and reproducibility, ensuring the application can be deployed reliably in any environment.
 
 
@@ -65,13 +72,19 @@ Deployment Ready: The project includes a complete Dockerfile and requirements.tx
 
 ⚙️How It Works
 The application follows a simple yet powerful workflow:
+
 Input: The user provides a job description and a list of candidate resumes (uploaded or pasted).
+
 Text Extraction: The system parses all documents into clean, raw text.
+
 Embedding & Analysis:
 The sentence-transformers model converts the job description and each resume into numerical vectors (embeddings).
 Simultaneously, spaCy extracts key nouns from the job description.
+
 Ranking: The cosine similarity is calculated between the job description vector and each resume vector.
+
 Output Generation: The candidates are ranked by their similarity score. For each top candidate, the system generates an AI summary and identifies matched keywords.
+
 Display: The final ranked list, interactive chart, and detailed results are presented to the user in the Streamlit interface.
 
 
@@ -89,8 +102,11 @@ These are the specialised functions that are defined to perform the core logic o
 
 Project Summary: Resu-Meter
 The "Resu-Meter" project successfully delivered a sophisticated AI Candidate Recommendation Engine. The application is fully functional and performs flawlessly in a local environment, proving its robust design and meeting all core objectives.
+
 Local Success: The app was completely built and validated, perfectly handling resume parsing, AI-based relevance ranking, and generative candidate summaries.
+
 Deployment Status: The application's code is stable and ready for deployment. Due to time constraints, the final step of adapting the app to the specific resource limitations of a free-tier cloud service was identified as the next step on the project roadmap.
+
 In conclusion, "Resu-Meter" is a proven success, demonstrating the ability to build and deliver a complex AI application from concept to a fully-realized product.
 
 Screenshots of outputs:
