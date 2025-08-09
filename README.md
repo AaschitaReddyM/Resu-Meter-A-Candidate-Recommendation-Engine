@@ -1,4 +1,5 @@
 Resu-Meter: An AI Powered Candidate Recommendation Engine
+
 Resu-Meter is an interactive web application designed to help recruiters find the best candidates for a job position. By leveraging semantic search and generative AI, the tool ranks the candidates based on the relevance of their resumes to a given job description.This streamlines the initial screening process.
 
 🛠️ Tech Stack 
@@ -15,12 +16,19 @@ Deployment: Docker, Ngrok (for demo)
 
 ⬇️ The Installed Libraries list
 1.Streamlit: this is the core framework i used to build the interactive web application and all its UI components as well (like buttons, text boxes etc)
+
 2.sentence-transformers: this is a powerful library I used to convert the text from resumes and job description, into meaningful numerical representations called embeddings to further calculate the relevancy and rankings.
+
 3.numpy: a package fundamental for numerical computing in python. I used this to calculate cosine similarity between the embeddings. Crucial for ranking the various candidates as per the relevance to job description.
+
 4.google-generativeai: This is the official google library that lets my application communicate with the Gemini API to generate AI summaries for the candidates.
+
 5.pyngrok: A tool that creates a secure, public URL to my Streamlit application which is running inside a google colab environment to be run on a web browser.
+
 6.PyPDF2, python-docx: These libraries are for file parsing. PyPDF2 is used to extract text from .pdf files and python-docx is used to extract text from .docx files(ms word).
+
 7.spacy: I used this library for adding an extra touch of Natural Language Processing(NLP). I used this because of its robust mechanism to analyse text and extract meaningful keywords.
+
 8.plotly and pandas: It's a powerful duo for data visualization. Pandas is used to organize the final recommendation data into a structured table(a dataframe).Plotly is used to create the interactive bar chart displayed indicating the rankings of the candidates as per the job relevance.
 
 
