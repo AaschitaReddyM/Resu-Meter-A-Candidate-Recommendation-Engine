@@ -109,16 +109,7 @@ Deployment Status: The application's code is stable and ready for deployment. Du
 
 In conclusion, "Resu-Meter" is a proven success, demonstrating the ability to build and deliver a complex AI application from concept to a fully-realized product.
 
-Screenshots of outputs:
-
-
-
-
-
-
-
-
-
+Screenshots of outputs: https://docs.google.com/document/d/1vV0T_VmaHXLQRu_gdGmNTVhhik9ljTkphvAWztQItnY/edit?usp=sharing
 
 
 🚀 Setup and Local Installation
