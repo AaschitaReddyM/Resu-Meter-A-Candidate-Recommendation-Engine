@@ -1,9 +1,6 @@
-# ---Source code for Streamlit application---
+# --- Source code for Streamlit application ---
 
-#essential because streamlit needs a .py file to run
-#%%writefile app.py
-
-#importing all the libraries previously installed, making their functions available to the script
+# importing all the libraries previously installed, making their functions available to the script
 import streamlit as st
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -18,51 +15,53 @@ import pandas as pd
 import plotly.express as px
 
 
-# ---Loading AI models and API Configuration---
+# --- Loading AI models and API Configuration ---
+# Configure the Google Generative AI with the API key from Streamlit's secrets
 genai.configure(api_key=os.environ.get('GOOGLE_API_KEY'))
 
-@st.cache_resource #using a decorator to indicate streamlit to be cautious about the next declared function.
+@st.cache_resource # Using a decorator to cache the model for performance
 def load_sentence_model():
-#loading the sentence-transformer model and cacheing it for faster execution
+    # Loading the sentence-transformer model and caching it for faster execution
     return SentenceTransformer('all-MiniLM-L6-v2')
 
-@st.cache_resource
+@st.cache_resource # Using a decorator to cache the model for performance
 def load_spacy_model():
-#loading the spacy model and cacheing it
+    # This function now correctly assumes the model is pre-installed via requirements.txt
+    # It will not try to download it during runtime, which solves the permission error.
+    return spacy.load("en_core_web_sm")
+
+# Loading the models at the start
+model = load_sentence_model()
+nlp = load_spacy_model()
+
+# --- Helper Functions ---
+# These are the specialised functions designed to perform the core logic of the application
+
+# Function to read uploaded files
+def extract_text_from_file(uploaded_file):
     try:
-        return spacy.load("en_core_web_sm")
-    except OSError:
-        print("Downloading the spaCy model")
-        spacy.cli.download("en_core_web_sm")
-        return spacy.load("en_core_web_sm")
-
-#loading the models
-model= load_sentence_model()
-nlp= load_spacy_model()
-
-# ---Helper Functions---
-#these are the specialised funcions designed to perform the core logic of the application
-
-#function to read uploaded files
-def extract_text_from_file(upload_file):
-    try:
-        if upload_file.type =="text/plain":
-            return uploaded_file.read().decode("utf-8")
+        if uploaded_file.type == "text/plain":
             # .read(): Method that reads a file's content as raw bytes.
             # .decode(): Method that converts bytes into a readable string.
-        elif uploaded_file.type== "application/pdf":
-            pdf_file= BytesIO(uploaded_file.getvalue()) # .getvalue(): Method that retrieves the raw byte content of the uploaded file.
+            return uploaded_file.read().decode("utf-8")
+        elif uploaded_file.type == "application/pdf":
+            # .getvalue(): Method that retrieves the raw byte content of the uploaded file.
             # BytesIO(): Class that creates an in-memory file-like object from bytes.
-            pdf_reader= PyPDF2.PdfReader(pdf_file) # PyPDF2.PdfReader(): Class that creates an object to read and parse a PDF file.
+            pdf_file = BytesIO(uploaded_file.getvalue())
+            # PyPDF2.PdfReader(): Class that creates an object to read and parse a PDF file.
+            pdf_reader = PyPDF2.PdfReader(pdf_file)
             text = ""
-            for page in pdf_reader.pages:  # .pages: Attribute that contains a list of all page objects within the PDF.
+            # .pages: Attribute that contains a list of all page objects within the PDF.
+            for page in pdf_reader.pages:
                 text += page.extract_text() or ""
             return text
-        elif uploaded_file.type== "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            doc= docx.Document(BytesIO(uploaded_file.getvalue())) # docx.Document(): Class that creates an object to read and parse a .docx file.
-            text= ""
-            for para in doc.paragraphs: # .paragraphs: Attribute containing a list of all paragraph objects in the document.
-                  text += para.text + "\\n"
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            # docx.Document(): Class that creates an object to read and parse a .docx file.
+            doc = docx.Document(BytesIO(uploaded_file.getvalue()))
+            text = ""
+            # .paragraphs: Attribute containing a list of all paragraph objects in the document.
+            for para in doc.paragraphs:
+                  text += para.text + "\n"
             return text
     except Exception as e:
         st.error(f"Error reading file {uploaded_file.name}: {e}")
@@ -70,22 +69,25 @@ def extract_text_from_file(upload_file):
 
 # Calculates the cosine similarity score between two numerical vectors.
 def cosine_similarity(a, b):
-    dot_product= np.dot(a, b) # np.dot(): Function that calculates the dot product of two vectors.
-    norm_a= np.linalg.norm(a) # np.linalg.norm(): Function that calculates the length (norm) of a vector.
-    norm_b= np.linalg.norm(b)
-    return 0.0 if norm_a ==0 or norm_b==0 else dot_product / (norm_a * norm_b)
+    # np.dot(): Function that calculates the dot product of two vectors.
+    dot_product = np.dot(a, b)
+    # np.linalg.norm(): Function that calculates the length (norm) of a vector.
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    return 0.0 if norm_a == 0 or norm_b == 0 else dot_product / (norm_a * norm_b)
 
 # Generates an AI summary by sending a prompt to the Google Gemini API.
 def get_gemini_summary(job_description, resume_text):
     prompt = (
         f"Based on the following job description and candidate resume, "
         f"write a concise summary (1-2 sentences) explaining why this candidate "
-        f"is a great fit for the role.\\n\\n"
-        f"Job Description:\\n{job_description}\\n\\n"
-        f"Candidate Resume:\\n{resume_text}"
+        f"is a great fit for the role.\n\n"
+        f"Job Description:\n{job_description}\n\n"
+        f"Candidate Resume:\n{resume_text}"
     )
     try:
-        model_gemini = genai.GenerativeModel('gemini-2.5-flash') #using the latest 2.5 flash model for higher accuracy and reliability
+        # Using a reliable Gemini model for summary generation
+        model_gemini = genai.GenerativeModel('gemini-1.5-flash')
         response = model_gemini.generate_content(prompt)
         return response.text or "Could not generate a summary from the API response."
     except Exception as e:
@@ -187,10 +189,10 @@ if submit_button:
             resume_keywords = extract_keywords(rec['resume'])
             matched_keywords = job_keywords.intersection(resume_keywords)
             if matched_keywords:
-                st.markdown(f"**🔑 Matched Keywords:** `{'`, `'.join(sorted(list(matched_keywords)))}`") #avoiding the identification of special characters instead of keywords
+                # avoiding the identification of special characters instead of keywords
+                st.markdown(f"**🔑 Matched Keywords:** `{'`, `'.join(sorted(list(matched_keywords)))}`")
 
-            with st.expander(" Show AI-Generated Summary"):
+            with st.expander("Show AI-Generated Summary"):
                 with st.spinner('Generating summary...'):
                     summary = get_gemini_summary(job_description, rec['resume'])
-
                     st.write(summary)
