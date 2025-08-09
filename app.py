@@ -6,7 +6,6 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 import os
-import time
 import PyPDF2
 import docx
 from io import BytesIO
@@ -17,7 +16,13 @@ import plotly.express as px
 
 # --- Loading AI models and API Configuration ---
 # Configure the Google Generative AI with the API key from Streamlit's secrets
-genai.configure(api_key=os.environ.get('GOOGLE_API_KEY'))
+# Ensure you have set 'GOOGLE_API_KEY' in your Streamlit Cloud secrets
+try:
+    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+except Exception as e:
+    st.error("Google API Key not found. Please add it to your Streamlit secrets.", icon="🚨")
+    st.stop()
+
 
 @st.cache_resource # Using a decorator to cache the model for performance
 def load_sentence_model():
@@ -41,25 +46,17 @@ nlp = load_spacy_model()
 def extract_text_from_file(uploaded_file):
     try:
         if uploaded_file.type == "text/plain":
-            # .read(): Method that reads a file's content as raw bytes.
-            # .decode(): Method that converts bytes into a readable string.
             return uploaded_file.read().decode("utf-8")
         elif uploaded_file.type == "application/pdf":
-            # .getvalue(): Method that retrieves the raw byte content of the uploaded file.
-            # BytesIO(): Class that creates an in-memory file-like object from bytes.
             pdf_file = BytesIO(uploaded_file.getvalue())
-            # PyPDF2.PdfReader(): Class that creates an object to read and parse a PDF file.
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             text = ""
-            # .pages: Attribute that contains a list of all page objects within the PDF.
             for page in pdf_reader.pages:
                 text += page.extract_text() or ""
             return text
         elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            # docx.Document(): Class that creates an object to read and parse a .docx file.
             doc = docx.Document(BytesIO(uploaded_file.getvalue()))
             text = ""
-            # .paragraphs: Attribute containing a list of all paragraph objects in the document.
             for para in doc.paragraphs:
                   text += para.text + "\n"
             return text
@@ -69,9 +66,7 @@ def extract_text_from_file(uploaded_file):
 
 # Calculates the cosine similarity score between two numerical vectors.
 def cosine_similarity(a, b):
-    # np.dot(): Function that calculates the dot product of two vectors.
     dot_product = np.dot(a, b)
-    # np.linalg.norm(): Function that calculates the length (norm) of a vector.
     norm_a = np.linalg.norm(a)
     norm_b = np.linalg.norm(b)
     return 0.0 if norm_a == 0 or norm_b == 0 else dot_product / (norm_a * norm_b)
@@ -86,7 +81,6 @@ def get_gemini_summary(job_description, resume_text):
         f"Candidate Resume:\n{resume_text}"
     )
     try:
-        # Using a reliable Gemini model for summary generation
         model_gemini = genai.GenerativeModel('gemini-1.5-flash')
         response = model_gemini.generate_content(prompt)
         return response.text or "Could not generate a summary from the API response."
@@ -189,7 +183,6 @@ if submit_button:
             resume_keywords = extract_keywords(rec['resume'])
             matched_keywords = job_keywords.intersection(resume_keywords)
             if matched_keywords:
-                # avoiding the identification of special characters instead of keywords
                 st.markdown(f"**🔑 Matched Keywords:** `{'`, `'.join(sorted(list(matched_keywords)))}`")
 
             with st.expander("Show AI-Generated Summary"):
