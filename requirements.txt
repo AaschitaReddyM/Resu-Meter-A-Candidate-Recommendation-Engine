@@ -7,5 +7,6 @@ python-docx
 spacy
 plotly
 pandas
-# Direct link to the spaCy model for reliable installation
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz#egg=en_core_web_sm
+
+Direct link to the spaCy model for reliable installation on Streamlit Cloud
+https://www.google.com/search?q=https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz%23egg%3Den_core_web_sm
