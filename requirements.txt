@@ -1,0 +1,9 @@
+streamlit
+numpy
+sentence-transformers
+google-generativeai
+PyPDF2
+python-docx
+spacy
+plotly
+pandas
